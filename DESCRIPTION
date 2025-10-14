@@ -1,11 +1,20 @@
 Package: yahoofantasyr
-Title: What the Package Does (One Line, Title Case)
+Title: Access Yahoo Fantasy API using R
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Chris", "Whaley", , "chriswhaleycodes@gmail.com", role = c("aut", "cre"))
+Description: Access the Yahoo Fantasy API to get league, team, and player data.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    dplyr,
+    httr2,
+    jsonlite,
+    purrr
+Depends: 
+    R (>= 3.5)
