@@ -2,9 +2,9 @@ client_id <- "dj0yJmk9dnFSQUx1UWF0VU9uJmQ9WVdrOVdYZ3hVbTF1VGprbWNHbzlNQT09JnM9Y2
 client_secret <- "efbc0114249caeba96ff6ec8e64738de027caec4"
 
 #1: Create an Application Client
-client <- oauth_client(
+client <- httr2::oauth_client(
   id = client_id,
-  secret = obfuscate(client_secret),
+  secret = client_secret,
   token_url = "https://api.login.yahoo.com/oauth2/get_token",
   name = "test"
 )

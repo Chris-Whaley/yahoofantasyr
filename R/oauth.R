@@ -4,24 +4,33 @@
 #' @export
 #'
 refresh_token <- function() {
-  # if (!file.exists(token_file)) {
-  #   initialize_token()
-  # }
-  # token <- readRDS(token_file)
-  # data("sysdata.rda")
+  token_path <- file.path(tempdir(), "refreshed_token.rds")
+
+  # if (!file.exists(".//data//refreshed_token.rds")) {
+  if (!file.exists(token_path)) {
+    return_token <- token
+  } else {
+    # load(".//data//refreshed_token.rda")
+    # return_token <- readRDS(".//data//refreshed_token.rds")
+    return_token <- readRDS(token_path)
+    # return_token <- refreshed_token
+    # return_token$expires_at <- as.POSIXct(refreshed_token$expires_at, origin = "1970-01-01")
+    return_token$expires_at <- as.POSIXct(return_token$expires_at, origin = "1970-01-01")
+  }
 
   # Refresh if expired
-  if (Sys.time() > token$expires_at) {
+  if (Sys.time() > return_token$expires_at) {
     refreshed_token <- httr2::oauth_flow_refresh(
       client,
-      refresh_token = token$refresh_token
+      refresh_token = return_token$refresh_token
     )
 
     # Save token for reuse
-    # saveRDS(refreshed_token, token_file)
-    usethis::use_data(refreshed_token, overwrite = TRUE)
-    token <- refreshed_token
+    # saveRDS(refreshed_token, ".//data//refreshed_token.rds")
+    saveRDS(refreshed_token, token_path)
+    # usethis::use_data(refreshed_token, overwrite = TRUE)
+    return_token <- refreshed_token
   }
 
-  token$access_token
+  return_token$access_token
 }
