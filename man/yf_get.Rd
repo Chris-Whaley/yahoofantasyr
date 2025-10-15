@@ -16,5 +16,5 @@ List from endpoint response
 GET Yahoo Fantasy API endpoints
 }
 \examples{
-#fantasy_football_seasons <- yf_get("games;game_codes=nfl")
+# fantasy_football_seasons <- yf_get("games;game_codes=nfl")
 }

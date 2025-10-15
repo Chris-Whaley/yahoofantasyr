@@ -1,14 +1,12 @@
-yf_gamekeys <- function()  {
+yf_gamekeys <- function() {
   result <- yahoofantasyr::yf_get(paste0("games;game_codes=nfl"))
   data <- result$fantasy_content$games
 
   temp_list <- list()
 
   for (season in names(data)) {
-    if (season == "count") {
-
-    } else {
-      season_df <- map(data[[season]]$game[[1]], as.tibble) |>
+    if (season == "count") {} else {
+      season_df <- purrr::lmap(data[[season]]$game[[1]], tibble::as_tibble) |>
         purrr::list_cbind()
 
       temp_list[[season]] <- season_df

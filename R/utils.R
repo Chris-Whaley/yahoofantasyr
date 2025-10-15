@@ -30,10 +30,11 @@ find_variable_in_nested_list <- function(nested_list, target_variable_name) {
 }
 
 
-
 find_list_with_name <- function(nested_list, target_name) {
   # Ensure input is a list
-  if (!is.list(nested_list)) return(NULL)
+  if (!is.list(nested_list)) {
+    return(NULL)
+  }
 
   # If the list has names and one matches target_name, return the list
   if (!is.null(names(nested_list)) && target_name %in% names(nested_list)) {
@@ -44,7 +45,9 @@ find_list_with_name <- function(nested_list, target_name) {
   for (item in nested_list) {
     if (is.list(item)) {
       found <- find_list_with_name(item, target_name)
-      if (!is.null(found)) return(found)
+      if (!is.null(found)) {
+        return(found)
+      }
     }
   }
 
