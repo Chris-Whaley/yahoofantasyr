@@ -30,6 +30,39 @@ find_variable_in_nested_list <- function(nested_list, target_variable_name) {
 }
 
 
+#' Search a Nested List to Get a List and its Respective Elements
+#'
+#' @param nested_list a list with nested elements
+#' @param target_name identifier for element and its associated elements
+#'
+#' @returns list
+#' @export
+#'
+#' @examples nested_list_example <- list(
+#' teamA = list(
+#' offense = list(
+#'   quarterback = "Patrick Mahomes",
+#'   running_back = "Isiah Pacheco",
+#'   wide_receivers = c("Rashee Rice", "Hollywood Brown")
+#' ),
+#' defense = list(
+#'   linebacker = "Nick Bolton",
+#'   cornerbacks = c("Trent McDuffie", "Joshua Williams")
+#' )
+#' ),
+#' teamB = list(
+#'   offense = list(
+#'     quarterback = "Josh Allen",
+#'     running_back = "James Cook",
+#'     wide_receivers = c("Stefon Diggs", "Khalil Shakir")
+#'   ),
+#'   defense = list(
+#'     linebacker = "Matt Milano",
+#'     cornerbacks = c("Kaiir Elam", "Taron Johnson")
+#'   )
+#' )
+#' )
+#' find_list_with_name(nested_list_example, "Josh Allen")
 find_list_with_name <- function(nested_list, target_name) {
   # Ensure input is a list
   if (!is.list(nested_list)) {
