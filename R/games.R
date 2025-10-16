@@ -19,24 +19,8 @@ yf_gamekeys <- function() {
     }
   }
 
-  # df <- dplyr::bind_rows(temp_list)
-  # df <- do.call(rbind, temp_list)
-  # rownames(df) <- NULL
-  # return(df)
-
-  # 1. Find all unique column names
-  all_cols <- unique(unlist(lapply(temp_list, names)))
-
-  # 2. Add missing columns to each data frame
-  df_list <- lapply(temp_list, function(df) {
-    missing <- setdiff(all_cols, names(df))
-    if (length(missing) > 0) df[missing] <- NA
-    df[all_cols]  # reorder columns consistently
-  })
-
-  # 3. Combine using rbind
-  df <- do.call(rbind, df_list)
-  rownames(df) <- NULL  # optional, reset rownames
+  df <- dplyr::bind_rows(temp_list)
+  # df <- bindRows(temp_list)
 
   return(df)
 }
@@ -67,7 +51,7 @@ yf_gamekey_current_season <- function() {
 #'
 #' @examples nfl_461 <- yf_game_from_key("461")
 yf_game_from_key <- function(game_key) {
-  result <- yf_gamekeys()
+  result <- yahoofantasyr::yf_gamekeys()
   # df <- result |>
   #   dplyr::filter(rlang::.data$game_key %in% rlang::.env$game_key)
   df <- result[result$game_key %in% game_key, , drop = FALSE]
@@ -86,7 +70,7 @@ yf_game_from_key <- function(game_key) {
 #'
 #' @examples nfl_2025 <- yf_game_from_year(2025)
 yf_game_from_year <- function(year) {
-  result <- yf_gamekeys()
+  result <- yahoofantasyr::yf_gamekeys()
   # df <- result |>
   #   dplyr::filter(rlang::.data$season %in% rlang::.env$year)
   df <- result[result$season %in% year, , drop = FALSE]
@@ -104,7 +88,7 @@ yf_game_from_year <- function(year) {
 #' @examples my_leagues <- yf_user_leagues()
 yf_user_leagues <- function() {
   result <- yahoofantasyr::yf_get("users;use_login=1/games;game_keys=nfl/leagues")
-  data <- find_list_with_name(result, "leagues")
+  data <- find_lists_with_name(result, "leagues")
 
   temp_list <- list()
   for (league in names(data)) {

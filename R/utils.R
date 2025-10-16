@@ -32,10 +32,10 @@ find_variable_in_nested_list <- function(nested_list, target_variable_name) {
 
 #' Search a Nested List to Get a List and its Respective Elements
 #'
-#' @param nested_list a list with nested elements
-#' @param target_name identifier for element and its associated elements
+#' @param nested_list a list with nested elements of lists
+#' @param target_name identifier for list(s)
 #'
-#' @returns list
+#' @returns list with elements all lists matching the target_name
 #' @export
 #'
 #' @examples nested_list_example <- list(
@@ -62,28 +62,55 @@ find_variable_in_nested_list <- function(nested_list, target_variable_name) {
 #'   )
 #' )
 #' )
-#' find_list_with_name(nested_list_example, "Josh Allen")
-find_list_with_name <- function(nested_list, target_name) {
-  # Ensure input is a list
+#' find_lists_with_name(nested_list_example, "offense")
+find_lists_with_name <- function(nested_list, target_name) {
+  # If not a list, stop recursion
   if (!is.list(nested_list)) {
-    return(NULL)
+    return(list())
   }
 
-  # If the list has names and one matches target_name, return the list
+  results <- list()
+
+  # If current list has the target name, add that sublist
   if (!is.null(names(nested_list)) && target_name %in% names(nested_list)) {
-    return(nested_list[[target_name]])
+    results <- c(results, list(nested_list[[target_name]]))
   }
 
-  # Otherwise, recursively search sublists
+  # Recurse into all sublists
   for (item in nested_list) {
     if (is.list(item)) {
-      found <- find_list_with_name(item, target_name)
-      if (!is.null(found)) {
-        return(found)
+      sub_results <- find_lists_with_name(item, target_name)
+      if (length(sub_results) > 0) {
+        results <- c(results, sub_results)
       }
     }
   }
 
-  # If not found
-  return(NULL)
+  return(results)
+}
+
+
+#' Bind Rows of List Elements
+#'
+#' @param input_list
+#'
+#' @returns Dataframe of each list element as a row
+#' @export
+#'
+bindRows <- function(input_list){
+  # 1. Find all unique column names
+  all_cols <- unique(unlist(lapply(input_list, names)))
+
+  # 2. Add missing columns to each data frame
+  df_list <- lapply(input_list, function(df) {
+    missing <- setdiff(all_cols, names(df))
+    if (length(missing) > 0) df[missing] <- NA
+    df[all_cols]  # reorder columns consistently
+  })
+
+  # 3. Combine using rbind
+  df <- do.call(rbind, df_list)
+  rownames(df) <- NULL  # optional, reset rownames
+
+  return(df)
 }
