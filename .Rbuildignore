@@ -1,6 +1,2 @@
-^yahoofantasyr\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
-^//R//initialize.R$
-^LICENSE\.md$
-^README\.Rmd$
-^data-raw$

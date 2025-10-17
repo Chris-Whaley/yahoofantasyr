@@ -19,28 +19,28 @@ Search a Nested List to Get a List and its Respective Elements
 }
 \examples{
 nested_list_example <- list(
-teamA = list(
-offense = list(
-  quarterback = "Patrick Mahomes",
-  running_back = "Isiah Pacheco",
-  wide_receivers = c("Rashee Rice", "Hollywood Brown")
-),
-defense = list(
-  linebacker = "Nick Bolton",
-  cornerbacks = c("Trent McDuffie", "Joshua Williams")
-)
-),
-teamB = list(
-  offense = list(
-    quarterback = "Josh Allen",
-    running_back = "James Cook",
-    wide_receivers = c("Stefon Diggs", "Khalil Shakir")
+  teamA = list(
+    offense = list(
+      quarterback = "Patrick Mahomes",
+      running_back = "Isiah Pacheco",
+      wide_receivers = c("Rashee Rice", "Hollywood Brown")
+    ),
+    defense = list(
+      linebacker = "Nick Bolton",
+      cornerbacks = c("Trent McDuffie", "Joshua Williams")
+    )
   ),
-  defense = list(
-    linebacker = "Matt Milano",
-    cornerbacks = c("Kaiir Elam", "Taron Johnson")
+  teamB = list(
+    offense = list(
+      quarterback = "Josh Allen",
+      running_back = "James Cook",
+      wide_receivers = c("Stefon Diggs", "Khalil Shakir")
+    ),
+    defense = list(
+      linebacker = "Matt Milano",
+      cornerbacks = c("Kaiir Elam", "Taron Johnson")
+    )
   )
-)
 )
 find_lists_with_name(nested_list_example, "offense")
 }

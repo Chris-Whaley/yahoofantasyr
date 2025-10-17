@@ -7,7 +7,7 @@
 bindRows(input_list)
 }
 \arguments{
-\item{input_list}{}
+\item{input_list}{a list of tibbles that will be appended by row}
 }
 \value{
 Dataframe of each list element as a row

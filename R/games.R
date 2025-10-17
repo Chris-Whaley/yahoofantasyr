@@ -52,9 +52,9 @@ yf_gamekey_current_season <- function() {
 #' @examples nfl_461 <- yf_game_from_key("461")
 yf_game_from_key <- function(game_key) {
   result <- yahoofantasyr::yf_gamekeys()
-  # df <- result |>
-  #   dplyr::filter(rlang::.data$game_key %in% rlang::.env$game_key)
-  df <- result[result$game_key %in% game_key, , drop = FALSE]
+  df <- result |>
+    dplyr::filter(game_key %in% game_key)
+  # df <- result[result$game_key %in% game_key, , drop = FALSE]
 
 
   return(df)
@@ -71,37 +71,8 @@ yf_game_from_key <- function(game_key) {
 #' @examples nfl_2025 <- yf_game_from_year(2025)
 yf_game_from_year <- function(year) {
   result <- yahoofantasyr::yf_gamekeys()
-  # df <- result |>
-  #   dplyr::filter(rlang::.data$season %in% rlang::.env$year)
-  df <- result[result$season %in% year, , drop = FALSE]
+  df <- result |>
+    dplyr::filter(season %in% year)
+  # df <- result[result$season %in% year, , drop = FALSE]
   return(df)
-}
-
-
-
-
-#' Get All Leagues You Participate In
-#'
-#' @returns Data frame with each row a league
-#' @export
-#'
-#' @examples my_leagues <- yf_user_leagues()
-yf_user_leagues <- function() {
-  result <- yahoofantasyr::yf_get("users;use_login=1/games;game_keys=nfl/leagues")
-  data <- find_lists_with_name(result, "leagues")
-
-  temp_list <- list()
-  for (league in names(data)) {
-    if (league != "count") {
-      league_df <- purrr::lmap(data[[league]]$league[[1]], tibble::as_tibble) |>
-        purrr::list_cbind()
-
-      temp_list[[league]] <- league_df
-    }
-  }
-
-  # df <- dplyr::bind_rows(temp_list)
-  df <- do.call(rbind, temp_list)
-  return(df)
-
 }

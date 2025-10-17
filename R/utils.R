@@ -1,3 +1,11 @@
+#' Return a Value in a Nested List by Searching for Its Name
+#'
+#' @param nested_list List with elements that are nested lists
+#' @param target_variable_name The name of the element to get the value
+#'
+#' @returns Value associated with name
+#' @export
+#'
 find_variable_in_nested_list <- function(nested_list, target_variable_name) {
   # Initialize a variable to store the found element, if any
   found_element <- NULL
@@ -39,28 +47,28 @@ find_variable_in_nested_list <- function(nested_list, target_variable_name) {
 #' @export
 #'
 #' @examples nested_list_example <- list(
-#' teamA = list(
-#' offense = list(
-#'   quarterback = "Patrick Mahomes",
-#'   running_back = "Isiah Pacheco",
-#'   wide_receivers = c("Rashee Rice", "Hollywood Brown")
-#' ),
-#' defense = list(
-#'   linebacker = "Nick Bolton",
-#'   cornerbacks = c("Trent McDuffie", "Joshua Williams")
-#' )
-#' ),
-#' teamB = list(
-#'   offense = list(
-#'     quarterback = "Josh Allen",
-#'     running_back = "James Cook",
-#'     wide_receivers = c("Stefon Diggs", "Khalil Shakir")
+#'   teamA = list(
+#'     offense = list(
+#'       quarterback = "Patrick Mahomes",
+#'       running_back = "Isiah Pacheco",
+#'       wide_receivers = c("Rashee Rice", "Hollywood Brown")
+#'     ),
+#'     defense = list(
+#'       linebacker = "Nick Bolton",
+#'       cornerbacks = c("Trent McDuffie", "Joshua Williams")
+#'     )
 #'   ),
-#'   defense = list(
-#'     linebacker = "Matt Milano",
-#'     cornerbacks = c("Kaiir Elam", "Taron Johnson")
+#'   teamB = list(
+#'     offense = list(
+#'       quarterback = "Josh Allen",
+#'       running_back = "James Cook",
+#'       wide_receivers = c("Stefon Diggs", "Khalil Shakir")
+#'     ),
+#'     defense = list(
+#'       linebacker = "Matt Milano",
+#'       cornerbacks = c("Kaiir Elam", "Taron Johnson")
+#'     )
 #'   )
-#' )
 #' )
 #' find_lists_with_name(nested_list_example, "offense")
 find_lists_with_name <- function(nested_list, target_name) {
@@ -92,12 +100,12 @@ find_lists_with_name <- function(nested_list, target_name) {
 
 #' Bind Rows of List Elements
 #'
-#' @param input_list
+#' @param input_list a list of tibbles that will be appended by row
 #'
 #' @returns Dataframe of each list element as a row
 #' @export
 #'
-bindRows <- function(input_list){
+bindRows <- function(input_list) {
   # 1. Find all unique column names
   all_cols <- unique(unlist(lapply(input_list, names)))
 
@@ -105,12 +113,12 @@ bindRows <- function(input_list){
   df_list <- lapply(input_list, function(df) {
     missing <- setdiff(all_cols, names(df))
     if (length(missing) > 0) df[missing] <- NA
-    df[all_cols]  # reorder columns consistently
+    df[all_cols] # reorder columns consistently
   })
 
   # 3. Combine using rbind
   df <- do.call(rbind, df_list)
-  rownames(df) <- NULL  # optional, reset rownames
+  rownames(df) <- NULL # optional, reset rownames
 
   return(df)
 }

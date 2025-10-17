@@ -39,8 +39,18 @@ if (httr2::resp_status(token_resp) >= 400) {
   stop("Token exchange failed: ", httr2::resp_status(token_resp), "\n", httr2::resp_body_string(token_resp))
 }
 
+
+# 4: Create initial token (initial user input needed, which I'll do)
 token <- httr2::resp_body_json(token_resp, simplifyVector = TRUE)
 token$expires_at <- Sys.time() + as.numeric(token$expires_in)
 
-# 4: Save token internally so it can be refreshed when needed by loading in the refresh_token function
-usethis::use_data(token, client, internal = TRUE, overwrite = TRUE)
+
+# 5: Refresh the token so we can only expose the refreshable token (no user input needed)
+refreshable_token <- httr2::oauth_flow_refresh(
+  client,
+  refresh_token = token$refresh_token
+)
+refreshable_token$expires_at <- as.POSIXct(refresh_token$expires_at, origin = "1970-01-01")
+
+# 6: Save token internally so it can be refreshed when needed by loading in the refresh_token function
+usethis::use_data(refreshable_token, client, internal = TRUE, overwrite = TRUE)

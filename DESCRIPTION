@@ -2,8 +2,10 @@ Package: yahoofantasyr
 Title: Access Yahoo Fantasy API using R
 Version: 0.0.0.9000
 Authors@R: 
-    person("Chris", "Whaley", , "chriswhaleycodes@gmail.com", role = c("aut", "cre"))
+    person("Chris", "Whaley", "chriswhaleycodes@gmail.com", role = c("aut", "cre"))
 Description: Access the Yahoo Fantasy API to get league, team, and player data.
+  We connect to our fantasy league of choice, and pull fantasy points, metadata,
+  and other data to our computer.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -11,11 +13,13 @@ RoxygenNote: 7.3.3
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Imports: 
+Imports:
     dplyr,
     httr2,
     purrr,
-    tibble
+    tibble,
+    tidyr,
+    tidyselect
 Depends: 
     R (>= 3.5)
 LazyData: true
