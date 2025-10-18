@@ -9,7 +9,7 @@ yf_team <- function(team_key) {
   )
 
   df <- map(vars, ~ find_variable_in_nested_list(data, .x)) %>%
-    rlang::set_names(vars) |>
+    set_names(vars) |>
     tibble::as.tibble()
 
   return(df)
@@ -58,7 +58,7 @@ yf_team_matchups <- function(team_key, week = NULL) {
   # [[2]]$matchups: each week's matchup
   # [[2]]$matchups[[1]]$matchup
   temp_df_meta <- map(vars_meta, ~ find_variable_in_nested_list(data[[2]]$matchups[[1]]$matchup, .x)) %>%
-    rlang::set_names(vars_meta) |>
+    set_names(vars_meta) |>
     tibble::as.tibble()
 
   all_weeks <- data[[2]]$matchups
@@ -72,7 +72,7 @@ yf_team_matchups <- function(team_key, week = NULL) {
     for (team in names(scores_df)) {
       if (team == "count") {} else {
         temp_df_week <- map(vars_team, ~ find_variable_in_nested_list(scores_df[[team]][[1]], .x)) %>%
-          rlang::set_names(vars_team) |>
+          set_names(vars_team) |>
           tibble::as.tibble()
 
         temp_df_week$week <- week

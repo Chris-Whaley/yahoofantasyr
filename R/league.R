@@ -49,7 +49,7 @@ yf_user_leagues <- function() {
 #' @export
 #'
 #' @examples league_roster_settings <- yf_league_settings("461.l.442310")
-yf_league_settings <- function(league_key) {
+yf_league_settings <- function(league_key, settings_type = "overview") {
   result <- yahoofantasyr::yf_get(paste0("league/", league_key, "/settings"))
   data <- result$fantasy_content$league[[2]]
 
@@ -57,7 +57,7 @@ yf_league_settings <- function(league_key) {
   settings <- data$settings[[1]]
 
   # Overview
-  scalar_settings <- purrr::keep(settings, ~ !is.list(.x)) |>
+  overview_settings <- purrr::keep(settings, ~ !is.list(.x)) |>
     purrr::map_chr(~ .x[[1]] %||% NA_character_) |>
     tibble::enframe(name = "setting", value = "value")
 
@@ -107,7 +107,18 @@ yf_league_settings <- function(league_key) {
   bonus_table <- bonus_table[, -1]
   names(bonus_table)[names(bonus_table) == "stat_id...2"] <- "stat_id"
 
-  return(roster_positions)
+  # Output choice
+  df <- switch(settings_type,
+    "overview" = overview_settings,
+    "roster" = roster_positions,
+    "categories" = stat_categories,
+    "groups" = stat_groups,
+    "modifiers" = stat_modifiers,
+    "bonuses" = bonus_table,
+    stop("Invalid choice")
+  )
+
+  return(df)
 }
 
 yf_league_standings <- function(league_key) {
@@ -136,21 +147,21 @@ yf_league_standings <- function(league_key) {
       # not the "value" of the streak
       # [[1]] : team metadata (name, team key)
       # [[3]] : standings data (points for/against, rank, streaks, wins/loses)
-      temp_df_meta <- map(vars_meta, ~ find_variable_in_nested_list(team_df[[1]], .x)) %>%
-        set_names(vars_meta) |>
-        as.tibble() |>
-        mutate(across(!c("team_key", "name", "nickname"), ~ map_dbl(.x, as.numeric)))
-      temp_df_scores <- map(vars_scores, ~ find_variable_in_nested_list(team_df[[3]], .x)) %>%
-        set_names(vars_scores) |>
-        as.tibble() |>
-        mutate(across(!c("type"), ~ map_dbl(.x, as.numeric)))
-      temp_df <- bind_cols(temp_df_meta, temp_df_scores)
+      temp_df_meta <- purrr::map(vars_meta, ~ yahoofantasyr::find_variable_in_nested_list(team_df[[1]], .x)) |>
+        rlang::set_names(vars_meta) |>
+        tibble::as_tibble() |>
+        dplyr::mutate(across(!c("team_key", "name", "nickname"), ~ purrr::map_dbl(.x, as.numeric)))
+      temp_df_scores <- purrr::map(vars_scores, ~ yahoofantasyr::find_variable_in_nested_list(team_df[[3]], .x)) |>
+        rlang::set_names(vars_scores) |>
+        tibble::as_tibble() |>
+        dplyr::mutate(across(!c("type"), ~ purrr::map_dbl(.x, as.numeric)))
+      temp_df <- dplyr::bind_cols(temp_df_meta, temp_df_scores)
 
       temp_list[[team]] <- temp_df
     }
   }
 
-  df <- bind_rows(map(temp_list, as.tibble))
+  df <- dplyr::bind_rows(purrr::map(temp_list, tibble::as_tibble))
 
   return(df)
 }
@@ -176,7 +187,7 @@ yf_league_scoreboard <- function(league_key, week = NULL) {
     }
   }
 
-  df <- bind_rows(map(temp_list, as.tibble))
+  df <- bind_rows(map(temp_list, as_tibble))
   df <- df |>
     mutate(week = week) |>
     relocate(week)
@@ -193,7 +204,7 @@ yf_league_teams <- function(league_key) {
   for (team in names(data)) {
     if (team == "count") {} else {
       temp_df <- purrr::map(vars, ~ yahoofantasyr::find_variable_in_nested_list(data[[team]], .x)) %>%
-        rlang::set_names(vars) |>
+        set_names(vars) |>
         tibble::as_tibble()
       temp_list[[team]] <- temp_df
     }
@@ -223,7 +234,7 @@ yf_league_draftresults <- function(league_key) {
   colnames(df) <- column_names
 
   for (pick in 1:number_of_picks) {
-    temp_df <- map(dt[[pick]]$draft_result, as.tibble) |> list_cbind()
+    temp_df <- map(dt[[pick]]$draft_result, tibble::as_tibble) |> list_cbind()
 
     df <- rbind(df, temp_df)
   }

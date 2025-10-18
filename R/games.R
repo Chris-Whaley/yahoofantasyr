@@ -53,7 +53,7 @@ yf_gamekey_current_season <- function() {
 yf_game_from_key <- function(game_key) {
   result <- yahoofantasyr::yf_gamekeys()
   df <- result |>
-    dplyr::filter(game_key %in% game_key)
+    dplyr::filter(game_key %in% .env$game_key)
   # df <- result[result$game_key %in% game_key, , drop = FALSE]
 
 
