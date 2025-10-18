@@ -38,15 +38,16 @@
   }
 
   user_league_key <- get_league_key()
+  the$user_league_name <- all_leagues |>
+    dplyr::filter(league_key == user_league_key) |>
+    dplyr::pull(name)
 
   # save to internal state if populated
-  if (!is.null(user_league_key)) {
+  if (!is.null(user_league_key) & length(the$user_league_name) > 0 ) {
     the$user_league_key <- user_league_key
-    the$user_league_name <- all_leagues |>
-      dplyr::filter(league_key == the$user_league_key) |>
-      dplyr::pull(name)
-
     message(paste("Using league:", the$user_league_name))
+  } else {
+    message("League not found. Please unattach and reattach package to try again.")
   }
 
 
