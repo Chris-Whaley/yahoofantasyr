@@ -140,7 +140,7 @@ yf_league_standings <- function(league_key) {
   )
 
   for (team in names(teams)) {
-    if (team == "count") {} else {
+    if (team != "count") {
       team_df <- teams[[team]]$team
 
       # have to split up variable lookup. it was picking up the first (i.e. incorrect) "value".
