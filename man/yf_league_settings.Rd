@@ -8,6 +8,8 @@ yf_league_settings(league_key, settings_type = "overview")
 }
 \arguments{
 \item{league_key}{Identifier for league}
+
+\item{settings_type}{Category of settings}
 }
 \value{
 Dataframe of league settings

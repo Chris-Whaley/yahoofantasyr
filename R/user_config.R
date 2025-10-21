@@ -19,7 +19,7 @@ the <- new.env(parent = emptyenv())
   the$all_leagues <- all_leagues |>
     dplyr::select(league_key, name, game_code, season)
   # print(the$all_leagues)
-  df_text <- paste(capture.output(print(data.frame(the$all_leagues), row.names = FALSE)), collapse = "\n")
+  df_text <- paste(utils::capture.output(print(data.frame(the$all_leagues), row.names = FALSE)), collapse = "\n")
   packageStartupMessage(
     cli::rule(center = "Welcome to yahoofantasyr"),
     "\n",
@@ -52,7 +52,6 @@ the <- new.env(parent = emptyenv())
   } else {
     packageStartupMessage("League not found. Please unattach and reattach package to try again.")
   }
-
 }
 
 
@@ -110,4 +109,3 @@ is_available_league <- function(input_league_key) {
   )
   return(result)
 }
-

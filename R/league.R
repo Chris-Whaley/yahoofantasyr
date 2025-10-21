@@ -54,6 +54,7 @@ yf_user_leagues <- function() {
 #' Get League Settings
 #'
 #' @param league_key Identifier for league
+#' @param settings_type Category of settings
 #'
 #' @returns Dataframe of league settings
 #' @export
@@ -117,7 +118,7 @@ yf_league_settings <- function(league_key, settings_type = "overview") {
     stat_modifiers |>
       dplyr::select(stat_id, bonuses) |>
       tidyr::unnest(bonuses, names_repair = "unique")
-    )
+  )
 
   bonus_table <- bonus_table[, -1]
   names(bonus_table)[names(bonus_table) == "stat_id...2"] <- "stat_id"
@@ -296,8 +297,3 @@ extract_matchup_teams <- function(matchup) {
 
   return(df)
 }
-
-
-
-
-
