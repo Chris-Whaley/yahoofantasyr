@@ -259,7 +259,7 @@ yf_league_draftresults <- function(league_key) {
 # Return stored league key or error if not set
 get_league_key <- function() {
   if (exists("user_league_key", envir = the)) {
-    get("user_league_key", envir = the)
+    return(get("user_league_key", envir = the))
   } else {
     stop("No league key currently saved. Please input one using 'set_league_key(key)'.")
   }
