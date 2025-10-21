@@ -66,12 +66,25 @@ yf_get <- function(endpoint) {
   req <- httr2::request(url) |>
     httr2::req_headers(Authorization = paste("Bearer", access_token))
 
-  # Perform request
-  resp <- httr2::req_perform(req)
+  # Perform request, catch any errors
+  resp <- req |>
+    httr2::req_error(is_error = \(resp) FALSE) |>
+    httr2::req_perform()
+
+  # Perform request, catch any errors
+  # resp <- tryCatch(
+  #   httr2::req_perform(req),
+  #   error = function(e) {
+  #     return(conditionMessage.condition(e))
+  #   }
+  # )
+  if ((httr2::resp_status(resp) == 200)) {
+    # Parse JSON
+    return(httr2::resp_body_json(resp))
+  } else {
+    stop("Invalid entry.")
+  }
 
   # Check for unauthorized
-  if (httr2::resp_status(resp) == 401) stop("Invalid or expired token.")
-
-  # Parse JSON
-  httr2::resp_body_json(resp)
+  # if (httr2::resp_status(resp) == 401) stop("Invalid or expired token.")
 }
