@@ -122,3 +122,20 @@ bindRows <- function(input_list) {
 
   return(df)
 }
+
+
+#' Clean and Flatten Yahoo API List
+#'
+#' Safely converts nested Yahoo Fantasy API lists to a tibble,
+#' replacing NULL values with NA.
+#'
+#' @param input_list A nested list returned from a Yahoo Fantasy API endpoint.
+#' @returns A tibble with NULLs replaced by NAs.
+#' @keywords internal
+#'
+clean_yahoo_list <- function(input_list) {
+  return_list <- purrr::modify(input_list, ~ if (is.null(.x)) NA else .x)
+  return_list <- purrr::lmap(return_list, tibble::as_tibble) |>
+    purrr::list_cbind()
+  return(return_list)
+}
