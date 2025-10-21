@@ -7,10 +7,15 @@
 #'
 #' @examples league <- yf_league("461.l.442310")
 yf_league <- function(league_key) {
+  if (missing(league_key)) {
+    league_key <- get_league_key()
+  }
   result <- yahoofantasyr::yf_get(paste0("league/", league_key))
   data <- result$fantasy_content$league[[1]]
-  df <- purrr::lmap(data, tibble::as_tibble) |>
-    purrr::list_cbind()
+  # df <- purrr::lmap(data, tibble::as_tibble) |>
+  #   purrr::list_cbind()
+
+  df <- clean_yahoo_list(data)
 
   return(df)
 }
@@ -23,18 +28,23 @@ yf_league <- function(league_key) {
 #'
 #' @examples my_leagues <- yf_user_leagues()
 yf_user_leagues <- function() {
-  result <- yahoofantasyr::yf_get("users;use_login=1/games;game_keys=nfl/leagues")
+  result <- yahoofantasyr::yf_get("users;use_login=1/games;is_available=1/leagues")
   data <- find_lists_with_name(result, "league")
 
   temp_list <- list()
-  for (league in seq_along(data)) {
-    if (league != "count") {
-      league_df <- purrr::lmap(data[[league]][[1]], tibble::as_tibble) |>
-        purrr::list_cbind()
+  # for (league in seq_along(data)) {
+  #   if (league != "count") {
+  #     league_df <- purrr::lmap(data[[league]][[1]], tibble::as_tibble) |>
+  #       purrr::list_cbind()
+  #
+  #     temp_list[[league]] <- league_df
+  #   }
+  # }
 
-      temp_list[[league]] <- league_df
-    }
+  for (index in seq_along(data)) {
+    temp_list[[index]] <- clean_yahoo_list(data[[index]][[1]])
   }
+
 
   df <- dplyr::bind_rows(temp_list)
   # df <- yahoofantasyr::bindRows(temp_list)
@@ -50,6 +60,9 @@ yf_user_leagues <- function() {
 #'
 #' @examples league_roster_settings <- yf_league_settings("461.l.442310")
 yf_league_settings <- function(league_key, settings_type = "overview") {
+  if (missing(league_key)) {
+    league_key <- get_league_key()
+  }
   result <- yahoofantasyr::yf_get(paste0("league/", league_key, "/settings"))
   data <- result$fantasy_content$league[[2]]
 
@@ -100,9 +113,11 @@ yf_league_settings <- function(league_key, settings_type = "overview") {
     purrr::list_rbind()
 
   # Break out the bonus per stat id
-  bonus_table <- stat_modifiers |>
-    dplyr::select(stat_id, bonuses) |>
-    tidyr::unnest(bonuses, names_repair = "unique")
+  bonus_table <- suppressMessages(
+    stat_modifiers |>
+      dplyr::select(stat_id, bonuses) |>
+      tidyr::unnest(bonuses, names_repair = "unique")
+    )
 
   bonus_table <- bonus_table[, -1]
   names(bonus_table)[names(bonus_table) == "stat_id...2"] <- "stat_id"
@@ -240,7 +255,24 @@ yf_league_draftresults <- function(league_key) {
   }
 }
 
-# helper function to pull matchup team data (minus player scores)
+# Return stored league key or error if not set
+get_league_key <- function() {
+  if (exists("user_league_key", envir = the)) {
+    get("user_league_key", envir = the)
+  } else {
+    stop("No league key currently saved. Please input one using 'set_league_key(key)'.")
+  }
+}
+
+# Allow manual setting of a key
+set_league_key <- function(key) {
+  assign("user_league_key", key, envir = the)
+  invisible(TRUE)
+}
+
+
+# Helpers ------------------------------------------------------------
+# helper function to pull matchup team meta data (minus player scores)
 extract_matchup_teams <- function(matchup) {
   get_team_info <- function(team) {
     list(
@@ -264,3 +296,8 @@ extract_matchup_teams <- function(matchup) {
 
   return(df)
 }
+
+
+
+
+
