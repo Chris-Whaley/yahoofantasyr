@@ -4,7 +4,7 @@
 \alias{yf_league_settings}
 \title{Get League Settings}
 \usage{
-yf_league_settings(league_key)
+yf_league_settings(league_key, settings_type = "overview")
 }
 \arguments{
 \item{league_key}{Identifier for league}
