@@ -1,0 +1,16 @@
+default:
+  team_columns:
+  - team_key
+  - team_id
+  - name
+  - nickname
+  - previous_season_team_rank
+  - number_of_moves
+  - number_of_trades
+  - waiver_priority
+auction:
+  auction_team_columns:
+  - auction_budget_total
+  - auction_budget_spent
+faab:
+  faab_team_columns: faab_balance
