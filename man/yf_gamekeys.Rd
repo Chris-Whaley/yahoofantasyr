@@ -4,7 +4,7 @@
 \alias{yf_gamekeys}
 \title{Get Game Keys for All Available Fantasy Seasons}
 \usage{
-yf_gamekeys()
+yf_gamekeys(game_code)
 }
 \value{
 Data frame of all game metadata

@@ -1,32 +1,3 @@
-# refresh_token <- function() {
-#   # token_path <- file.path(tempdir(), "refreshed_token.rds")
-#   token_path <- file.path("./data/refreshed_token.rds")
-#   token_path <- new.env(parent = emptyenv())
-#
-#
-#   # use the initializing token for the first use. afterwards use refresh token
-#   if (!file.exists(token_path)) {
-#     return_token <- token
-#   } else {
-#     return_token <- readRDS(token_path)
-#     return_token$expires_at <- as.POSIXct(return_token$expires_at, origin = "1970-01-01")
-#   }
-#
-#   # Refresh if expired
-#   if (Sys.time() > return_token$expires_at) {
-#     refreshed_token <- httr2::oauth_flow_refresh(
-#       client,
-#       refresh_token = return_token$refresh_token
-#     )
-#
-#     saveRDS(refreshed_token, token_path)
-#     return_token <- refreshed_token
-#   }
-#
-#   return(return_token$access_token)
-# }
-
-
 #' Refreshed the API token
 #'
 #' @returns Access token to make API call
@@ -71,20 +42,11 @@ yf_get <- function(endpoint) {
     httr2::req_error(is_error = \(resp) FALSE) |>
     httr2::req_perform()
 
-  # Perform request, catch any errors
-  # resp <- tryCatch(
-  #   httr2::req_perform(req),
-  #   error = function(e) {
-  #     return(conditionMessage.condition(e))
-  #   }
-  # )
+  # Check for valid response
   if ((httr2::resp_status(resp) == 200)) {
     # Parse JSON
     return(httr2::resp_body_json(resp))
   } else {
     stop("Invalid entry.")
   }
-
-  # Check for unauthorized
-  # if (httr2::resp_status(resp) == 401) stop("Invalid or expired token.")
 }

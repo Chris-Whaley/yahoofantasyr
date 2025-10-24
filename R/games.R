@@ -4,8 +4,10 @@
 #' @export
 #'
 #' @examples all_nfl_seasons <- yf_gamekeys()
-yf_gamekeys <- function() {
-  result <- yahoofantasyr::yf_get(paste0("games;game_codes=nfl"))
+yf_gamekeys <- function(game_code) {
+  path <- "games;game_codes=nfl,mlb,nhl,nba"
+  if (!missing(game_code)) path <- paste0("games;game_codes=", game_code)
+  result <- yahoofantasyr::yf_get(path)
   data <- result$fantasy_content$games
 
   temp_list <- list()
@@ -20,7 +22,6 @@ yf_gamekeys <- function() {
   }
 
   df <- dplyr::bind_rows(temp_list)
-  # df <- bindRows(temp_list)
 
   return(df)
 }

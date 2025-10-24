@@ -2,15 +2,19 @@ yf_team <- function(team_key) {
   result <- yahoofantasyr::yf_get(paste0("team/", team_key))
   data <- result$fantasy_content$team[[1]]
 
-  vars <- c(
-    "team_key", "team_id", "name", "nickname",
-    "previous_season_team_rank", "faab_balance", "number_of_moves",
-    "number_of_trades", "auction_budget_total", "auction_budget_spent"
-  )
+  # vars <- c(
+  #   "team_key", "team_id", "name", "nickname",
+  #   "previous_season_team_rank", "faab_balance", "number_of_moves",
+  #   "number_of_trades", "auction_budget_total", "auction_budget_spent"
+  # )
 
-  df <- map(vars, ~ find_variable_in_nested_list(data, .x)) %>%
-    set_names(vars) |>
-    tibble::as.tibble()
+  vars <- the$team_columns
+
+  df <- purrr::map(vars, ~ find_variable_in_nested_list(data, .x)) |>
+    rlang::set_names(vars) |>
+    # tibble::as_tibble()
+    clean_yahoo_list() |>
+    dplyr::mutate(dplyr::across(!c("team_key", "team_id", "name", "nickname"), ~ purrr::map_dbl(.x, as.numeric)))
 
   return(df)
 }
@@ -95,4 +99,54 @@ yf_team_matchups <- function(team_key, week = NULL) {
     dplyr::relocate(week)
 
   return(all)
+}
+
+yf_user_teams <- function(active_season = "yes") {
+  result <- yf_get("users;use_login=1/teams")
+  data <- result$fantasy_content$users[[1]]$user[[2]]$teams
+
+  vars <- c("team_key", "team_id", "name", "nickname")
+
+  temp_list <- list()
+
+  for (team in names(data)) {
+    if (team != "count") {
+      df <- purrr::map(vars, ~ find_variable_in_nested_list(data[[team]]$team, .x)) |>
+        rlang::set_names(vars) |>
+        clean_yahoo_list()
+
+      temp_list[[team]] <- df
+    }
+  }
+
+  teams_df <- dplyr::bind_rows(temp_list) |>
+    dplyr::mutate(game_key = stringr::str_extract(team_key, "^\\d+(?=\\.)")) # keep only digits to the left of the first period
+
+  leagues_seasons <- yf_gamekeys() |>
+    dplyr::select(game_key, code, season, is_game_over, is_offseason)
+
+  final_df <- teams_df |>
+    dplyr::left_join(leagues_seasons, by = "game_key")
+
+  return_df <- switch(active_season,
+    "yes" = final_df |> dplyr::filter(is_game_over == 0),
+    "no" = final_df |> dplyr::filter(is_game_over == 1),
+    "all" = final_df
+  )
+
+  return(return_df)
+}
+
+set_my_team_key <- function(league_key) {
+  if (missing(league_key)) {
+    league_key <- get_league_key()
+  }
+}
+
+set_my_team_key <- function(league_key) {
+  if (missing(league_key)) {
+    league_key <- get_league_key()
+  }
+
+  print(yf_league_teams(league_key))
 }
